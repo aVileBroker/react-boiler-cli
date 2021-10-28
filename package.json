@@ -1,0 +1,27 @@
+{
+  "name": "react-boiler-cli",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/aVileBroker/react-boiler-cli.git",
+  "author": "Oliver Baker <avilebroker@gmail.com>",
+  "license": "CC0",
+  "private": false,
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "@types/clui": "^0.3.1",
+    "@types/inquirer": "^8.1.3",
+    "@types/node": "^16.11.6",
+    "chalk": "^4.1.2",
+    "clui": "^0.3.6",
+    "configstore": "^6.0.0",
+    "eslint": "^8.1.0",
+    "inquirer": "^8.2.0",
+    "minimist": "^1.2.5",
+    "nodemon": "^2.0.14",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  }
+}
