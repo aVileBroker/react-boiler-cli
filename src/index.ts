@@ -15,14 +15,11 @@ import { clear } from "console";
 import { Spinner } from "clui";
 import { exec } from "child_process";
 
-// Create new folder
-// Copy in base modified create-react-app
-// Update package.json and copy in more content for answers
-// yarn install
-
 const CURR_DIR = process.cwd();
 
 const questions: QuestionCollection<any> = [
+  // TODO: Add more questions like "3d", "mobile", and more
+  // TODO: Add templates for video and libraries which aren't "traditional frontends"
   {
     name: "name",
     type: "input",
@@ -136,16 +133,20 @@ const createDirectoryContents = (templatePath: string, projectName: string) => {
 const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   if (answers.foundry) {
     deps.push("@headstorm/foundry-react-ui");
-    // TODO: Add the
+    // TODO: Add the provider to App.tsx
   }
   if (answers.zustand) {
     deps.push("zustand");
+    // TODO: Add an empty store
   }
   if (answers.wouter) {
     deps.push("wouter");
+    // TODO: Add a router provider to App.tsx
+    // TODO: Add "screens" folder
   }
   if (answers.data === "JSON") {
     deps.push("react-query");
+    // TODO: Learn how to use react-query and add the correct stuff here
   }
   const finalDeps = [...deps, ...answers.addons];
 
@@ -166,6 +167,7 @@ console.log(
   )
 );
 prompt(questions).then((answers) => {
+  clear();
   const projectName = answers["name"];
   // const templatePath = join(__dirname, "templates", projectChoice);
   const templatePath = join(__dirname, "templates/base"); // hard coding to base until more templates come online
@@ -189,4 +191,5 @@ prompt(questions).then((answers) => {
   installSpinner.start();
   exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
   installDepsFromAnswers(targetPath, answers);
+  console.log(chalk.greenBright("✔️", " ", "Installed dependencies"));
 });
