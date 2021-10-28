@@ -1,8 +1,0 @@
-{
-  "name": "base",
-  "version": "0.0.1",
-  "description": "Base template",
-  "main": "index.ts",
-  "license": "CC0",
-  "private": false
-}
