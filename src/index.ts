@@ -189,5 +189,4 @@ prompt(questions).then((answers) => {
   installSpinner.start();
   exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
   installDepsFromAnswers(targetPath, answers);
-  console.log(answers);
 });
