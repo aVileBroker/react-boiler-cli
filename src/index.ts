@@ -18,23 +18,6 @@ import { exec } from "child_process";
 // Create new folder
 // Copy in base modified create-react-app
 // Update package.json and copy in more content for answers
-
-// ? Foundry UI? (y/n)
-// ? Global state with Zustand? (y/n)
-// ? Routing with Wouter? (y/n)
-// ? (If foundry and wouter) Do you want to start with basic UI screens?
-//   ( ) Login page
-//   ( ) Main app page
-//   ( ) Top navigation
-//   ( ) ...
-// ? Install other useful packages? (optional)
-//   ( ) react-spring - physically based animations
-//   ( ) @mdi/js - icon paths compatible with foundry-ui
-//   ( ) polished - color management
-//   ( ) use-gesture -
-//   ( ) react-dnd - drag and drop support on touch/mouse
-//   ( ) fuse.js - fuzzy-search client-side data
-
 // yarn install
 
 const CURR_DIR = process.cwd();
@@ -53,6 +36,11 @@ const questions: QuestionCollection<any> = [
   },
   {
     name: "zustand",
+    type: "confirm",
+    message: "State management with zustand?",
+  },
+  {
+    name: "wouter",
     type: "confirm",
     message: "Page routing with wouter?",
   },
@@ -81,10 +69,13 @@ const questions: QuestionCollection<any> = [
 const deps: string[] = [];
 const devDeps: string[] = [];
 
-export interface CliOptions {
-  projectName: string;
-  templatePath: string;
-  targetPath: string;
+export interface Answers {
+  name: string;
+  foundry: boolean;
+  zustand: boolean;
+  wouter: boolean;
+  data: string;
+  addons: string[];
 }
 
 const createProjectDirectory = (newPath: string) => {
@@ -138,7 +129,7 @@ const createDirectoryContents = (templatePath: string, projectName: string) => {
   progress.stop();
 };
 
-const installDepsFromAnswers = (answers) => {
+const installDepsFromAnswers = (answers: Answers) => {
   if (answers.foundry) {
     deps.push("@headstorm/foundry-react-ui");
   }
@@ -163,11 +154,7 @@ prompt(questions).then((answers) => {
   // const templatePath = join(__dirname, "templates", projectChoice);
   const templatePath = join(__dirname, "templates/base"); // hard coding to base until more templates come online
   const targetPath = join(CURR_DIR, projectName);
-  const options: CliOptions = {
-    projectName,
-    templatePath,
-    targetPath,
-  };
+
   if (!createProjectDirectory(targetPath)) {
     return;
   }
