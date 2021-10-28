@@ -55,13 +55,17 @@ const questions: QuestionCollection<any> = [
     name: "addons",
     type: "checkbox",
     message: "Install other useful packages? (optional)",
+    filter: (selection: string[]) =>
+      selection.map((str) => str.split(" - ")[0]),
+    transformer: (selection: string[]) =>
+      selection.map((str) => str.split(" - ")[0]),
     choices: [
-      `${chalk.bold("react-spring")} - physically based animations`,
-      `${chalk.bold("@mdi/js")} - icon paths compatible with foundry-ui`,
-      `${chalk.bold("polished")} - color management`,
-      `${chalk.bold("use-gesture")} - gesture support`,
-      `${chalk.bold("react-dnd")} - drag and drop support on touch/mouse`,
-      `${chalk.bold("fuse.js")} - fuzzy-search client-side data`,
+      `react-spring - physically based animations`,
+      `@mdi/js - icon paths compatible with foundry-ui`,
+      `polished - color management`,
+      `use-gesture - gesture support`,
+      `react-dnd - drag and drop support on touch/mouse`,
+      `fuse.js - fuzzy-search client-side data`,
     ],
   },
 ];
@@ -129,18 +133,30 @@ const createDirectoryContents = (templatePath: string, projectName: string) => {
   progress.stop();
 };
 
-const installDepsFromAnswers = (answers: Answers) => {
+const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   if (answers.foundry) {
     deps.push("@headstorm/foundry-react-ui");
+    // TODO: Add the
   }
   if (answers.zustand) {
     deps.push("zustand");
   }
+  if (answers.wouter) {
+    deps.push("wouter");
+  }
   if (answers.data === "JSON") {
     deps.push("react-query");
   }
+  const finalDeps = [...deps, ...answers.addons];
 
-  exec(`yarn add ${deps.join(" ")}`);
+  const addonSpinner = new Spinner("Installing addon modules...");
+  addonSpinner.start();
+  exec(`cd ${projectPath} && yarn add ${finalDeps.join(" ")}`, (errorMsg) => {
+    addonSpinner.stop();
+    if (errorMsg) {
+      console.error(errorMsg);
+    }
+  });
 };
 
 clear();
@@ -169,7 +185,9 @@ prompt(questions).then((answers) => {
   createDirectoryContents(templatePath, projectName);
   console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
 
-  exec("yarn install");
-  installDepsFromAnswers(answers);
+  const installSpinner = new Spinner("Installing base node modules...");
+  installSpinner.start();
+  exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
+  installDepsFromAnswers(targetPath, answers);
   console.log(answers);
 });

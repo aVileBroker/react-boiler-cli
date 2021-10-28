@@ -4,5 +4,6 @@
   "description": "Base template",
   "main": "index.ts",
   "license": "CC0",
+  "dependencies": {},
   "private": false
 }
