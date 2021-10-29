@@ -154,6 +154,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     pkg.dependencies["wouter"] = versions.wouter;
     pkg.devDependencies["@types/wouter"] = versions.typesWouter;
     variations.push("wouter");
+    copyDirectory(join(__dirname, "addonModules/wouter"), answers.name, "src");
   }
   if (answers.data === "JSON") {
     pkg.dependencies["react-query"] = versions.reactQuery;
