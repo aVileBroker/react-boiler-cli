@@ -1,0 +1,1 @@
+export defualt () => (<div>Login to continue</div>);

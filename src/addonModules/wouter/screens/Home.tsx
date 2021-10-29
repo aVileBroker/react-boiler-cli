@@ -1,0 +1,1 @@
+export defualt () => (<div>Hello World</div>);

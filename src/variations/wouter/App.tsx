@@ -1,6 +1,9 @@
 import { Switch, Route } from "wouter";
 import styled from "styled-components";
 
+import Home from "screens/Home";
+import Login from "screens/Login";
+
 const Container = styled.div`
   width: 1080px;
   max-width: 90vw;
@@ -14,11 +17,13 @@ const Container = styled.div`
 
 export default (): JSX.Element | null => (
   <Switch>
-    <Route path="/login">
-      <Container>Login:</Container>
-    </Route>
-    <Route path="">
-      <Container>Home</Container>
-    </Route>
+    <Container>
+      <Route path="/login">
+        <Login />
+      </Route>
+      <Route path="">
+        <Home />
+      </Route>
+    </Container>
   </Switch>
 );
