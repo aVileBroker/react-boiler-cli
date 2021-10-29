@@ -1,4 +1,3 @@
-import { FoundryProvider } from '@headstorm/foundry-react-ui';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -12,8 +11,4 @@ const Container = styled.div`
   gap: 2rem;
 `;
 
-export default (): JSX.Element | null => (
-  <FoundryProvider>
-    <Container></Container>
-  </FoundryProvider>
-);
+export default (): JSX.Element | null => <Container></Container>;

@@ -97,7 +97,7 @@ const createProjectDirectory = (newPath: string) => {
 
 const filesToSkip = ["node_modules", ".template.json"];
 
-const createDirectoryContents = (
+const copyDirectory = (
   templatePath: string,
   projectName: string,
   subDir: string = ""
@@ -129,10 +129,7 @@ const createDirectoryContents = (
       // create folder in destination folder
       mkdirSync(join(currDir, projectName, subDir, file));
       // copy files/folder inside current folder recursively
-      createDirectoryContents(
-        join(templatePath, file),
-        join(projectName, subDir, file)
-      );
+      copyDirectory(join(templatePath, file), join(projectName, subDir, file));
     }
   });
 
@@ -142,22 +139,21 @@ const createDirectoryContents = (
 const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   const pkg = require(`${projectPath}/package.json`);
 
+  const variationString: string[] = [];
+
   if (answers.foundry) {
     pkg.dependencies["@headstorm/foundry-react-ui"] = versions.foundry;
-    // TODO: Add the provider to App.tsx
+    variationString.push("foundry");
   }
   if (answers.zustand) {
     pkg.dependencies["zustand"] = versions.zustand;
     // Add an empty store
-    createDirectoryContents(
-      join(__dirname, "addonModules/zustand"),
-      answers.name,
-      "src"
-    );
+    copyDirectory(join(__dirname, "addonModules/zustand"), answers.name, "src");
   }
   if (answers.wouter) {
     pkg.dependencies["wouter"] = versions.wouter;
     pkg.devDependencies["@types/wouter"] = versions.typesWouter;
+    // variationString.push("wouter");
     // TODO: Add a router provider to App.tsx
     // TODO: Add "screens" folder
   }
@@ -168,6 +164,15 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   answers.addons.forEach((addon) => {
     pkg.dependencies[addon] = versions[addon] || "*";
   });
+
+  if (variationString.length) {
+    // copy App.tsx variations for the chosen setup
+    copyDirectory(
+      join(__dirname, `variations/${variationString.join("-")}`),
+      answers.name,
+      "src"
+    );
+  }
 
   require("fs").writeFileSync(
     `${projectPath}/package.json`,
@@ -180,7 +185,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
 clear();
 console.log(
   chalk.blue.bold(
-    "Welcome to aVileBroker's React boilerplate! Tell me about the app you want to make."
+    "Welcome to aVileBroker's React boilerplate!\nTell me about the app you want to make."
   )
 );
 prompt(questions).then((answers) => {
@@ -202,7 +207,7 @@ prompt(questions).then((answers) => {
     )
   );
 
-  createDirectoryContents(templatePath, projectName);
+  copyDirectory(templatePath, projectName);
   console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
 
   installDepsFromAnswers(targetPath, answers);
