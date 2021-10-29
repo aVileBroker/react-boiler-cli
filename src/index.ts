@@ -139,11 +139,11 @@ const copyDirectory = (
 const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   const pkg = require(`${projectPath}/package.json`);
 
-  const variationString: string[] = [];
+  const variations: string[] = [];
 
   if (answers.foundry) {
     pkg.dependencies["@headstorm/foundry-react-ui"] = versions.foundry;
-    variationString.push("foundry");
+    variations.push("foundry");
   }
   if (answers.zustand) {
     pkg.dependencies["zustand"] = versions.zustand;
@@ -153,7 +153,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   if (answers.wouter) {
     pkg.dependencies["wouter"] = versions.wouter;
     pkg.devDependencies["@types/wouter"] = versions.typesWouter;
-    // variationString.push("wouter");
+    variations.push("wouter");
     // TODO: Add a router provider to App.tsx
     // TODO: Add "screens" folder
   }
@@ -165,10 +165,10 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     pkg.dependencies[addon] = versions[addon] || "*";
   });
 
-  if (variationString.length) {
+  if (variations.length) {
     // copy App.tsx variations for the chosen setup
     copyDirectory(
-      join(__dirname, `variations/${variationString.join("-")}`),
+      join(__dirname, `variations/${variations.join("-")}`),
       answers.name,
       "src"
     );
