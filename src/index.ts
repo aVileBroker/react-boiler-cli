@@ -154,8 +154,6 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     pkg.dependencies["wouter"] = versions.wouter;
     pkg.devDependencies["@types/wouter"] = versions.typesWouter;
     variations.push("wouter");
-    // TODO: Add a router provider to App.tsx
-    // TODO: Add "screens" folder
   }
   if (answers.data === "JSON") {
     pkg.dependencies["react-query"] = versions.reactQuery;
