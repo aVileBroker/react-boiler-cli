@@ -17,6 +17,14 @@ import { exec } from "child_process";
 
 const currDir = process.cwd();
 
+const versions = {
+  foundry: "1",
+  zustand: "3",
+  wouter: "2",
+  typesWouter: "2",
+  reactQuery: "3",
+};
+
 const questions: QuestionCollection<any> = [
   // TODO: Add more questions like "3d", "mobile", and more
   // TODO: Add templates for video and libraries which aren't "traditional frontends"
@@ -135,12 +143,14 @@ const createDirectoryContents = (
 };
 
 const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
+  const pkg = require(`${projectPath}/package.json`);
+
   if (answers.foundry) {
-    deps.push("@headstorm/foundry-react-ui");
+    pkg.dependencies["@headstorm/foundry-react-ui"] = versions.foundry;
     // TODO: Add the provider to App.tsx
   }
   if (answers.zustand) {
-    deps.push("zustand");
+    pkg.dependencies["zustand"] = versions.zustand;
     // Add an empty store
     createDirectoryContents(
       join(__dirname, "addonModules/zustand"),
@@ -149,24 +159,22 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     );
   }
   if (answers.wouter) {
-    deps.push("wouter");
+    pkg.dependencies["wouter"] = versions.wouter;
+    pkg.devDependencies["@types/wouter"] = versions.typesWouter;
     // TODO: Add a router provider to App.tsx
     // TODO: Add "screens" folder
   }
   if (answers.data === "JSON") {
-    deps.push("react-query");
+    pkg.dependencies["react-query"] = versions.reactQuery;
     // TODO: Learn how to use react-query and add the correct stuff here
   }
-  const finalDeps = [...deps, ...answers.addons];
+  // const finalDeps = [...deps, ...answers.addons];
+  require("fs").writeFileSync(
+    `${projectPath}/package.json`,
+    JSON.stringify(pkg, null, 2)
+  );
 
-  const addonSpinner = new Spinner("Installing addon modules...");
-  addonSpinner.start();
-  exec(`cd ${projectPath} && yarn add ${finalDeps.join(" ")}`, (errorMsg) => {
-    addonSpinner.stop();
-    if (errorMsg) {
-      console.error(errorMsg);
-    }
-  });
+  console.log(chalk.greenBright("✔️", " ", "Addons added to package.json"));
 };
 
 clear();
@@ -197,9 +205,10 @@ prompt(questions).then((answers) => {
   createDirectoryContents(templatePath, projectName);
   console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
 
-  const installSpinner = new Spinner("Installing base node modules...");
+  const installSpinner = new Spinner("Installing node modules...");
   installSpinner.start();
-  exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
   installDepsFromAnswers(targetPath, answers);
+
+  exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
   console.log(chalk.greenBright("✔️", " ", "Installed dependencies"));
 });
