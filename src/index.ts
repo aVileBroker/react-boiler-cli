@@ -15,7 +15,7 @@ import { clear } from "console";
 import { Spinner } from "clui";
 import { exec } from "child_process";
 
-const CURR_DIR = process.cwd();
+const currDir = process.cwd();
 
 const questions: QuestionCollection<any> = [
   // TODO: Add more questions like "3d", "mobile", and more
@@ -24,7 +24,7 @@ const questions: QuestionCollection<any> = [
     name: "name",
     type: "input",
     message: "What is the project called?",
-    validate: (input) => !existsSync(join(CURR_DIR, input)),
+    validate: (input) => !existsSync(join(currDir, input)),
   },
   {
     name: "foundry",
@@ -92,7 +92,11 @@ const createProjectDirectory = (newPath: string) => {
 
 const filesToSkip = ["node_modules", ".template.json"];
 
-const createDirectoryContents = (templatePath: string, projectName: string) => {
+const createDirectoryContents = (
+  templatePath: string,
+  projectName: string,
+  subDir: string = ""
+) => {
   const progress = new Spinner("Writing code...");
   progress.start();
 
@@ -114,15 +118,15 @@ const createDirectoryContents = (templatePath: string, projectName: string) => {
       // read file content and transform it using template engine
       let contents = readFileSync(origFilePath, "utf8");
       // write file to destination folder
-      const writePath = join(CURR_DIR, projectName, file);
+      const writePath = join(currDir, projectName, subDir, file);
       writeFileSync(writePath, contents, "utf8");
     } else if (stats.isDirectory()) {
       // create folder in destination folder
-      mkdirSync(join(CURR_DIR, projectName, file));
+      mkdirSync(join(currDir, projectName, subDir, file));
       // copy files/folder inside current folder recursively
       createDirectoryContents(
         join(templatePath, file),
-        join(projectName, file)
+        join(projectName, subDir, file)
       );
     }
   });
@@ -137,7 +141,12 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
   }
   if (answers.zustand) {
     deps.push("zustand");
-    // TODO: Add an empty store
+    // Add an empty store
+    createDirectoryContents(
+      join(__dirname, "addonModules/zustand"),
+      answers.name,
+      "src"
+    );
   }
   if (answers.wouter) {
     deps.push("wouter");
@@ -171,7 +180,7 @@ prompt(questions).then((answers) => {
   const projectName = answers["name"];
   // const templatePath = join(__dirname, "templates", projectChoice);
   const templatePath = join(__dirname, "templates/base"); // hard coding to base until more templates come online
-  const targetPath = join(CURR_DIR, projectName);
+  const targetPath = join(currDir, projectName);
 
   if (!createProjectDirectory(targetPath)) {
     return;
@@ -184,6 +193,7 @@ prompt(questions).then((answers) => {
       projectName
     )
   );
+
   createDirectoryContents(templatePath, projectName);
   console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
 
