@@ -17,7 +17,7 @@ import { exec } from "child_process";
 
 const currDir = process.cwd();
 
-const versions = {
+const versions: { [key in string]: string } = {
   foundry: "1",
   zustand: "3",
   wouter: "2",
@@ -74,9 +74,6 @@ const questions: QuestionCollection<any> = [
     ],
   },
 ];
-
-const deps: string[] = [];
-const devDeps: string[] = [];
 
 export interface Answers {
   name: string;
@@ -168,7 +165,10 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     pkg.dependencies["react-query"] = versions.reactQuery;
     // TODO: Learn how to use react-query and add the correct stuff here
   }
-  // const finalDeps = [...deps, ...answers.addons];
+  answers.addons.forEach((addon) => {
+    pkg.dependencies[addon] = versions[addon] || "*";
+  });
+
   require("fs").writeFileSync(
     `${projectPath}/package.json`,
     JSON.stringify(pkg, null, 2)
@@ -205,10 +205,12 @@ prompt(questions).then((answers) => {
   createDirectoryContents(templatePath, projectName);
   console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
 
-  const installSpinner = new Spinner("Installing node modules...");
-  installSpinner.start();
   installDepsFromAnswers(targetPath, answers);
 
-  exec(`cd ${targetPath} && yarn install`, () => installSpinner.stop());
-  console.log(chalk.greenBright("✔️", " ", "Installed dependencies"));
+  const installSpinner = new Spinner("Installing dependencies...");
+  installSpinner.start();
+  exec(`cd ${targetPath} && yarn install`, () => {
+    installSpinner.stop();
+    console.log(chalk.greenBright("✔️", " ", "Installed dependencies"));
+  });
 });
