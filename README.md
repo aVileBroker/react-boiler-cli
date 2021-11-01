@@ -1,7 +1,5 @@
-To run, simply install the package globally, and run it in the directory where you want to initialize your project!
-`yarn install react-boiler-cli -global`
-
-`react-boiler-cli`
+Simply run it in the directory where you want to initialize your project!
+`npx react-boiler-cli`
 
 What you get by default:
 
