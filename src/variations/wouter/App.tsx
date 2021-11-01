@@ -16,14 +16,14 @@ const Container = styled.div`
 `;
 
 export default (): JSX.Element | null => (
-  <Switch>
-    <Container>
+  <Container>
+    <Switch>
       <Route path="/login">
         <Login />
       </Route>
       <Route path="">
         <Home />
       </Route>
-    </Container>
-  </Switch>
+    </Switch>
+  </Container>
 );
