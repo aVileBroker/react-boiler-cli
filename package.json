@@ -1,6 +1,6 @@
 {
   "name": "react-boiler-cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist",
   "repository": "https://github.com/aVileBroker/react-boiler-cli.git",
   "author": "Oliver Baker <avilebroker@gmail.com>",
