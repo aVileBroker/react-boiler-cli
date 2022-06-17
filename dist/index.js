@@ -135,7 +135,7 @@ const installDepsFromAnswers = (projectPath, answers) => {
         copyDirectory((0, path_1.join)(__dirname, `variations/${variations.join("-")}`), answers.name, "src");
     }
     require("fs").writeFileSync(`${projectPath}/package.json`, JSON.stringify(pkg, null, 2));
-    console.log(chalk_1.default.greenBright("✔️", " ", "Addons added to package.json"));
+    console.log(chalk_1.default.greenBright(" ", "✔️", "Addons added to package.json"));
 };
 (0, console_1.clear)();
 console.log(chalk_1.default.blue.bold("Welcome to aVileBroker's React boilerplate!\nTell me about the app you want to make."));
@@ -148,15 +148,17 @@ console.log(chalk_1.default.blue.bold("Welcome to aVileBroker's React boilerplat
     if (!createProjectDirectory(targetPath)) {
         return;
     }
-    console.log(chalk_1.default.greenBright("✔️", " ", "Successfully created project directory:", projectName));
+    console.log(chalk_1.default.greenBright(" ", "✔️", "Successfully created project directory:", projectName));
     copyDirectory(templatePath, projectName);
-    console.log(chalk_1.default.greenBright("✔️", " ", "Copied template contents"));
+    console.log(chalk_1.default.greenBright(" ", "✔️", "Copied template contents"));
     installDepsFromAnswers(targetPath, answers);
     const installSpinner = new clui_1.Spinner("Installing dependencies...");
     installSpinner.start();
     (0, child_process_1.exec)(`cd ${targetPath} && yarn install`, () => {
         installSpinner.stop();
-        console.log(chalk_1.default.greenBright("✔️", " ", "Installed dependencies"));
+        console.log(chalk_1.default.greenBright(" ", "✔️", "Installed dependencies"));
+        console.log(chalk_1.default.greenBright(" ", "✔️", "Project creation complete"));
+        console.log(chalk_1.default.blueBright(`Run 'yarn start' in /${projectName} to start the app on localhost:3000"`));
     });
 });
 //# sourceMappingURL=index.js.map
