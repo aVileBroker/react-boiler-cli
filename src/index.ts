@@ -178,7 +178,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     JSON.stringify(pkg, null, 2)
   );
 
-  console.log(chalk.greenBright("✔️", " ", "Addons added to package.json"));
+  console.log(chalk.greenBright(" ", "✔️", "Addons added to package.json"));
 };
 
 clear();
@@ -199,15 +199,15 @@ prompt(questions).then((answers) => {
   }
   console.log(
     chalk.greenBright(
-      "✔️",
       " ",
+      "✔️",
       "Successfully created project directory:",
       projectName
     )
   );
 
   copyDirectory(templatePath, projectName);
-  console.log(chalk.greenBright("✔️", " ", "Copied template contents"));
+  console.log(chalk.greenBright(" ", "✔️", "Copied template contents"));
 
   installDepsFromAnswers(targetPath, answers);
 
@@ -215,6 +215,12 @@ prompt(questions).then((answers) => {
   installSpinner.start();
   exec(`cd ${targetPath} && yarn install`, () => {
     installSpinner.stop();
-    console.log(chalk.greenBright("✔️", " ", "Installed dependencies"));
+    console.log(chalk.greenBright(" ", "✔️", "Installed dependencies"));
+    console.log(chalk.greenBright(" ", "✔️", "Project creation complete"));
+    console.log(
+      chalk.blueBright(
+        `Run 'yarn start' in /${projectName} to start the app on localhost:3000"`
+      )
+    );
   });
 });
