@@ -39,21 +39,37 @@ const questions: QuestionCollection<any> = [
     name: "capacitor",
     type: "confirm",
     message: "Create native mobile builds?",
+    default: false,
+  },
+  {
+    name: "android",
+    type: "confirm",
+    message: "Include Android?",
+    default: false,
+  },
+  {
+    name: "ios",
+    type: "confirm",
+    message: "Include iOS?",
+    default: false,
   },
   {
     name: "foundry",
     type: "confirm",
     message: "Foundry UI?",
+    default: false,
   },
   {
     name: "zustand",
     type: "confirm",
     message: "State management with zustand?",
+    default: false,
   },
   {
     name: "wouter",
     type: "confirm",
     message: "Page routing with wouter?",
+    default: false,
   },
   {
     name: "data",
@@ -183,7 +199,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
       pkg.scripts = { ...pkg.scripts, android: "npx cap run android" };
     }
     if (answers.ios) {
-      pkg.scripts = { ...pkg.scripts, android: "npx cap run ios" };
+      pkg.scripts = { ...pkg.scripts, ios: "npx cap run ios" };
     }
   }
 
@@ -229,6 +245,7 @@ prompt(questions).then((answers) => {
   if (!createProjectDirectory(targetPath)) {
     return;
   }
+
   console.log(
     chalk.greenBright(
       " ",
@@ -250,9 +267,55 @@ prompt(questions).then((answers) => {
     console.log(chalk.greenBright(" ", "✔️ ", "Installed dependencies"));
     console.log(chalk.greenBright(" ", "✔️ ", "Project creation complete"));
 
+    if (answers.capacitor) {
+      const capacitorSpinner = new Spinner(
+        "Initializing native environment..."
+      );
+      capacitorSpinner.start();
+
+      exec("npx cap init", () => {
+        capacitorSpinner.stop();
+        console.log(
+          chalk.greenBright(" ", "✔️ ", "Native environment initialized")
+        );
+
+        if (answers.android) {
+          // exec("npx cap add android"]);
+          // () => {
+          //   console.log(
+          //     chalk.blueBright(
+          //       " ",
+          //       " ",
+          //       `Run 'yarn android' in /${projectName} to start in a native emulator"`
+          //     )
+          //   );
+          // }
+        }
+
+        if (answers.ios) {
+          // exec("npx cap add android"]);
+          // () => {
+          //   console.log(
+          //     chalk.blueBright(
+          //       " ",
+          //       " ",
+          //       `Run 'yarn ios' in /${projectName} to start in a native emulator"`
+          //     )
+          //   );
+          // });
+        }
+      });
+    }
+
     console.log(
       chalk.blueBright(
         `Run 'yarn start' in /${projectName} to start the app on localhost:3000"`
+      )
+    );
+
+    console.log(
+      chalk.yellowBright(
+        `Check the ${projectName} README for more information and troubleshooting tips."`
       )
     );
   });
