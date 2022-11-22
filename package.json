@@ -4,7 +4,7 @@
   "main": "dist",
   "repository": "https://github.com/aVileBroker/react-boiler-cli.git",
   "author": "Oliver Baker <avilebroker@gmail.com>",
-  "license": "CC0",
+  "license": "CC-BY-4.0",
   "private": false,
   "scripts": {
     "start": "ts-node src/index.ts",

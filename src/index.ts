@@ -23,16 +23,22 @@ const versions: { [key in string]: string } = {
   wouter: "2",
   typesWouter: "2",
   reactQuery: "3",
+  capacitor: "4",
 };
 
 const questions: QuestionCollection<any> = [
-  // TODO: Add more questions like "3d", "mobile", and more
+  // TODO: Add more questions like "3d"
   // TODO: Add templates for video and libraries which aren't "traditional frontends"
   {
     name: "name",
     type: "input",
     message: "What is the project called?",
     validate: (input) => !existsSync(join(currDir, input)),
+  },
+  {
+    name: "capacitor",
+    type: "confirm",
+    message: "Create native mobile builds?",
   },
   {
     name: "foundry",
@@ -80,6 +86,9 @@ export interface Answers {
   foundry: boolean;
   zustand: boolean;
   wouter: boolean;
+  capacitor: boolean;
+  android: boolean;
+  ios: boolean;
   data: string;
   addons: string[];
 }
@@ -156,6 +165,28 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     variations.push("wouter");
     copyDirectory(join(__dirname, "addonModules/wouter"), answers.name, "src");
   }
+
+  // Capacitor
+  if (answers.capacitor) {
+    pkg.devDependencies["@capacitor/cli"] = versions.capacitor;
+    pkg.dependencies["@capacitor/core"] = versions.capacitor;
+    pkg.dependencies["@capacitor/ios"] = versions.capacitor;
+    pkg.dependencies["@capacitor/android"] = versions.capacitor;
+
+    pkg.scripts = { ...pkg.scripts, sync: "npx cap sync" };
+    pkg.scripts = {
+      ...pkg.scripts,
+      "build-and-sync": "yarn build && npx cap sync",
+    };
+
+    if (answers.android) {
+      pkg.scripts = { ...pkg.scripts, android: "npx cap run android" };
+    }
+    if (answers.ios) {
+      pkg.scripts = { ...pkg.scripts, android: "npx cap run ios" };
+    }
+  }
+
   if (answers.data === "JSON") {
     pkg.dependencies["react-query"] = versions.reactQuery;
     // TODO: Learn how to use react-query and add the correct stuff here
@@ -178,7 +209,7 @@ const installDepsFromAnswers = (projectPath: string, answers: Answers) => {
     JSON.stringify(pkg, null, 2)
   );
 
-  console.log(chalk.greenBright(" ", "✔️", "Addons added to package.json"));
+  console.log(chalk.greenBright(" ", "✔️ ", "Addons added to package.json"));
 };
 
 clear();
@@ -187,6 +218,7 @@ console.log(
     "Welcome to aVileBroker's React boilerplate!\nTell me about the app you want to make."
   )
 );
+
 prompt(questions).then((answers) => {
   clear();
   const projectName = answers["name"];
@@ -200,14 +232,14 @@ prompt(questions).then((answers) => {
   console.log(
     chalk.greenBright(
       " ",
-      "✔️",
+      "✔️ ",
       "Successfully created project directory:",
       projectName
     )
   );
 
   copyDirectory(templatePath, projectName);
-  console.log(chalk.greenBright(" ", "✔️", "Copied template contents"));
+  console.log(chalk.greenBright(" ", "✔️ ", "Copied template contents"));
 
   installDepsFromAnswers(targetPath, answers);
 
@@ -215,8 +247,9 @@ prompt(questions).then((answers) => {
   installSpinner.start();
   exec(`cd ${targetPath} && yarn install`, () => {
     installSpinner.stop();
-    console.log(chalk.greenBright(" ", "✔️", "Installed dependencies"));
-    console.log(chalk.greenBright(" ", "✔️", "Project creation complete"));
+    console.log(chalk.greenBright(" ", "✔️ ", "Installed dependencies"));
+    console.log(chalk.greenBright(" ", "✔️ ", "Project creation complete"));
+
     console.log(
       chalk.blueBright(
         `Run 'yarn start' in /${projectName} to start the app on localhost:3000"`
