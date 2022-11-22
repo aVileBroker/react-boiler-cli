@@ -258,6 +258,8 @@ prompt(questions).then((answers) => {
   copyDirectory(templatePath, projectName);
   console.log(chalk.greenBright(" ", "✔️ ", "Copied template contents"));
 
+  exec("git init");
+
   installDepsFromAnswers(targetPath, answers);
 
   const installSpinner = new Spinner("Installing dependencies...");
